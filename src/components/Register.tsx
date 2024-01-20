@@ -24,6 +24,7 @@ export const Register = () => {
 
   const processForm: SubmitHandler<RegisterFormInputs> = async (data) => {
     try {
+      console.log(data);
       await axios.post("http://localhost:8080/register", data, {
         withCredentials: true,
       });
@@ -130,6 +131,27 @@ export const Register = () => {
                 {errors.password?.message && (
                   <p className="ml-1 mt-1 text-sm text-red-500">
                     {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  {...register("confirmPassword")}
+                  placeholder="••••••••"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+                {errors.confirmPassword?.message && (
+                  <p className="ml-1 mt-1 text-sm text-red-500">
+                    {errors.confirmPassword.message}
                   </p>
                 )}
               </div>
