@@ -2,10 +2,15 @@ import { RegisterFormSchema } from "../util/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import * as z from "zod";
+import axios, { AxiosError } from "axios";
+import { useState } from "react";
 
 type RegisterFormInputs = z.infer<typeof RegisterFormSchema>;
 
 export const Register = () => {
+
+  const [errMsg, setErrMsg] = useState<string>("");
+
   const {
     register,
     handleSubmit,
@@ -15,9 +20,24 @@ export const Register = () => {
     resolver: zodResolver(RegisterFormSchema),
   });
 
-  const processForm: SubmitHandler<RegisterFormInputs> = (data) => {
-    console.log(data);
-    reset();
+
+
+  const processForm: SubmitHandler<RegisterFormInputs> = async (data) => {
+    try {
+        await axios.post("http://localhost:8080/register", data, {
+        withCredentials: true,
+      });
+      reset();
+    } catch (err: unknown) {
+      let msg;
+
+      if (err instanceof AxiosError) {
+        msg = err.response?.data.message
+        setErrMsg(msg)
+      }
+
+      console.log(err)
+    }
   };
 
   return (
@@ -125,6 +145,11 @@ export const Register = () => {
                   Login
                 </a>
               </p>
+              {errMsg && (
+                  <p className="ml-1 mt-1 text-sm text-red-500">
+                    {errMsg}
+                  </p>
+                )}
             </form>
           </div>
         </div>
