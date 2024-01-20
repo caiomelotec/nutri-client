@@ -4,12 +4,14 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import * as z from "zod";
 import axios, { AxiosError } from "axios";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 type RegisterFormInputs = z.infer<typeof RegisterFormSchema>;
 
 export const Register = () => {
-
   const [errMsg, setErrMsg] = useState<string>("");
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -20,23 +22,22 @@ export const Register = () => {
     resolver: zodResolver(RegisterFormSchema),
   });
 
-
-
   const processForm: SubmitHandler<RegisterFormInputs> = async (data) => {
     try {
-        await axios.post("http://localhost:8080/register", data, {
+      await axios.post("http://localhost:8080/register", data, {
         withCredentials: true,
       });
       reset();
+      navigate("/login");
     } catch (err: unknown) {
       let msg;
 
       if (err instanceof AxiosError) {
-        msg = err.response?.data.message
-        setErrMsg(msg)
+        msg = err.response?.data.message;
+        setErrMsg(msg);
       }
 
-      console.log(err)
+      console.log(err);
     }
   };
 
@@ -133,23 +134,24 @@ export const Register = () => {
                 )}
               </div>
 
-              <button className="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-blue-700 dark:focus:ring-primary-800">
-                JOIN
+              <button
+                disabled={isSubmitting}
+                className="w-full text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 hover:bg-blue-800 dark:focus:ring-primary-800"
+              >
+                {isSubmitting ? "Joining" : "Join"}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have an account?{" "}
-                <a
-                  href="#"
+                <Link
+                  to={"/login"}
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   Login
-                </a>
+                </Link>
               </p>
               {errMsg && (
-                  <p className="ml-1 mt-1 text-sm text-red-500">
-                    {errMsg}
-                  </p>
-                )}
+                <p className="ml-1 mt-1 text-sm text-red-500">{errMsg}</p>
+              )}
             </form>
           </div>
         </div>
