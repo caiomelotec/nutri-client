@@ -22,3 +22,11 @@ export const RegisterFormSchema = z
     path: ["confirmPassword"],
     message: "Password don't match",
   });
+
+export const LoginFormSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "Email is required" })
+    .email("Invalid email adress"),
+  password: z.string().min(6, { message: "Password is required" }),
+});
