@@ -1,23 +1,41 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LoginFormSchema } from "../util/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
+import { useAuthStore } from "../store/authStore";
+import { AxiosError } from "axios";
+import { useState } from "react";
 
 type LoginFormInputs = z.infer<typeof LoginFormSchema>;
 
 export default function Login() {
+  const { login } = useAuthStore((state) => state);
+  const [errMsg, setErrMsg] = useState("");
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormInputs>({
     resolver: zodResolver(LoginFormSchema),
   });
 
-  const processForm: SubmitHandler<LoginFormInputs> = (data) => {
-    return console.log(data);
+  const processForm: SubmitHandler<LoginFormInputs> = async (data) => {
+    try {
+      await login(data);
+      reset();
+      // navigate("/");
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        setErrMsg(err.response?.data.message);
+      } else {
+        console.log(err);
+        setErrMsg("Something went wrong");
+      }
+    }
   };
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -112,6 +130,11 @@ export default function Login() {
                   Sign up
                 </Link>
               </p>
+              {errMsg && (
+                  <p className="ml-1 mt-1 text-sm text-red-600">
+                    {errMsg}
+                  </p>
+                )}
             </form>
           </div>
         </div>
