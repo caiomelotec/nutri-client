@@ -83,6 +83,7 @@ export const Register = () => {
                 </label>
                 <input
                   type="number"
+                  min={1} 
                   id="age"
                   {...register("age")}
                   placeholder=""
