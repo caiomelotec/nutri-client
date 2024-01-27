@@ -30,3 +30,16 @@ export const LoginFormSchema = z.object({
     .email("Invalid email adress"),
   password: z.string().min(6, { message: "Password is required" }),
 });
+
+export const AddFoodFormSchema = z
+  .object({
+    name: z.string().min(1, { message: "Food name is required" }),
+    calories: z.coerce.number().min(1, { message: "Calories is required" }),
+    carbohydrates: z.coerce
+      .number()
+      .min(1, { message: "Carbohydrates is required" }),
+    fat: z.coerce.number().min(1, { message: "Fat is required" }),
+    protein: z.coerce.number().min(1, { message: "Protein is required" }),
+    fiber: z.coerce.number().min(1, { message: "Fiber is required" }),
+  })
+  .required();
