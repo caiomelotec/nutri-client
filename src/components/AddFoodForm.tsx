@@ -3,11 +3,14 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useState } from "react";
+import axios from "axios";
+import { AxiosError } from "axios";
 
 type AddFoodFormInputs = z.infer<typeof AddFoodFormSchema>;
 
 export const AddFoodForm = () => {
   const [errMsg, setErrMsg] = useState("");
+  const [sucessMsg, setSuccessMsg] = useState("");
 
   const {
     register,
@@ -19,7 +22,29 @@ export const AddFoodForm = () => {
   });
 
   const processForm: SubmitHandler<AddFoodFormInputs> = async (data) => {
-    console.log(data);
+    try {
+      const req = await axios.post("http://localhost:8080/addfood", data, {
+        withCredentials: true,
+      });
+      if (req.status === 200) {
+        reset();
+        setSuccessMsg("Food added successfully")
+        setTimeout(() => {
+          setSuccessMsg("")
+        }, 3000)
+      }
+    } catch (err:unknown) {
+      if(err instanceof AxiosError) {
+        console.log(err.response)
+        setErrMsg(err.response!.data.message)
+        setTimeout(() => {
+          setErrMsg("")
+        }, 3000)
+      } else {
+        console.log(err);
+        setErrMsg("Something went wrong!")
+      }
+    }
   };
 
   return (
@@ -141,6 +166,11 @@ export const AddFoodForm = () => {
           <p className="p-1 text-sm text-red-900 bg-red-300 rounded-md text-center w-fit m-auto my-1 px-6">
             {errMsg}
           </p>
+        )}
+        {sucessMsg && (
+           <p className="p-1 text-sm text-green-900 bg-green-300 rounded-md text-center w-fit m-auto my-1 px-6">
+           {sucessMsg}
+         </p>
         )}
         <button className="bg-sky-600 hover:bg-sky-800 duration-300 text-white rounded px-3 py-1 my-2 font-semibold text-lg">
           Add Food
