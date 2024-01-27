@@ -1,6 +1,7 @@
 import "./App.css";
-import Login from "./components/Login.tsx";
-import { Register } from "./components/Register.tsx";
+import { AddFood } from "./pages/AddFood.tsx";
+import Login from "./pages/Login.tsx";
+import { Register } from "./pages/Register.tsx";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
         <Routes>
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
+          <Route path="addfood" element={<AddFood />} />
         </Routes>
       </BrowserRouter>
     </>
